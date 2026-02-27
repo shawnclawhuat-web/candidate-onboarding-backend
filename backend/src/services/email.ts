@@ -2,6 +2,7 @@ import { Resend } from 'resend';
 
 const getResendClient = () => {
   const apiKey = process.env.RESEND_API_KEY;
+  console.log('RESEND_API_KEY from env:', apiKey ? 'SET' : 'NOT SET');
   if (!apiKey) {
     throw new Error('RESEND_API_KEY is not configured');
   }
