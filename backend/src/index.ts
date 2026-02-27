@@ -7,9 +7,15 @@ import milestoneRoutes from './routes/milestones';
 import profileRoutes from './routes/profiles';
 import { isJwtSecretFallback } from './config/jwt';
 
-// Load .env but don't override existing env vars (like Render's)
+// Load .env from backend folder
 import dotenv from 'dotenv';
-dotenv.config({ override: false });
+import path from 'path';
+const result = dotenv.config({ path: path.resolve(__dirname, '../.env'), override: false });
+if (result.error) {
+  console.log('No .env file loaded:', result.error.message);
+} else {
+  console.log('Environment variables loaded from .env');
+}
 
 const app = express();
 
