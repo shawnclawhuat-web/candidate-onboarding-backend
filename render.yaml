@@ -6,4 +6,4 @@ services:
     startCommand: cd backend && npm start
     envVars:
       - key: DATABASE_URL
-        value: postgresql://postgres:sNE@R+P8JPPg.Cc@db.bbwrosuuksxzvrstnctp.supabase.co:5432/postgres?schema=public
+        value: postgresql://postgres:sNE%40R%2BP8JPPg.Cc@db.bbwrosuuksxzvrstnctp.supabase.co:5432/postgres?schema=public
