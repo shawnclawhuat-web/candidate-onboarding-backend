@@ -1,0 +1,2 @@
+export declare const sendOnboardingEmail: (email: string, candidateName: string, adminName: string, onboardingLink: string) => Promise<import("resend").CreateEmailResponse>;
+//# sourceMappingURL=email.d.ts.map

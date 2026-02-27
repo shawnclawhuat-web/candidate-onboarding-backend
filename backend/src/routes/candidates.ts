@@ -9,8 +9,18 @@ const router = Router();
 // Get all candidates for admin
 router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
   try {
+    const search = typeof req.query.search === 'string' ? req.query.search : undefined;
+    
     const candidates = await prisma.candidate.findMany({
-      where: { adminId: req.user!.id },
+      where: { 
+        adminId: req.user!.id,
+        ...(search ? { 
+          OR: [
+            { email: { contains: search, mode: 'insensitive' } },
+            { profile: { fullName: { contains: search, mode: 'insensitive' } } }
+          ]
+        } : {})
+      },
       include: {
         profile: true,
         _count: { select: { milestones: true } }

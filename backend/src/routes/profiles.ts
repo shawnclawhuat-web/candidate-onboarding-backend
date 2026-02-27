@@ -1,5 +1,6 @@
 import { Router, Response } from 'express';
 import prisma from '../db';
+import { AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
@@ -10,10 +11,13 @@ router.get('/profile/:token', async (req: AuthRequest, res: Response) => {
 
     const candidate = await prisma.candidate.findUnique({
       where: { onboardingToken: token },
-      include: { profile: true, admin: { select: { fullName: true } } }
+      include: { 
+        profile: true, 
+        admin: { select: { fullName: true } } 
+      }
     });
 
-    if (!candidate) {
+    if (!candidate || !candidate.profile) {
       return res.status(404).json({ error: 'Invalid token' });
     }
 
@@ -24,7 +28,7 @@ router.get('/profile/:token', async (req: AuthRequest, res: Response) => {
     res.json({
       email: candidate.email,
       profile: candidate.profile,
-      adminName: candidate.admin.fullName,
+      adminName: candidate.admin?.fullName || 'Admin',
       status: candidate.status
     });
   } catch (error) {
@@ -86,8 +90,5 @@ router.put('/profile/:token', async (req: AuthRequest, res: Response) => {
     res.status(500).json({ error: 'Failed to update profile' });
   }
 });
-
-// Need to import AuthRequest type
-import { AuthRequest } from '../middleware/auth';
 
 export default router;
