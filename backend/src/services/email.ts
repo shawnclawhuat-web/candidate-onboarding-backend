@@ -17,7 +17,7 @@ export const sendOnboardingEmail = async (
   try {
     const resend = getResendClient();
     const result = await resend.emails.send({
-      from: 'Candidate Portal <onboarding@yourdomain.com>',
+      from: 'Candidate Portal <onboarding@resend.dev>',
       to: email,
       subject: 'Complete Your Candidate Profile',
       html: `
