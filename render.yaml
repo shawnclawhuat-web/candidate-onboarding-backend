@@ -7,3 +7,11 @@ services:
     envVars:
       - key: DATABASE_URL
         value: postgresql://postgres:sNE%40R%2BP8JPPg.Cc@db.bbwrosuuksxzvrstnctp.supabase.co:5432/postgres?schema=public
+      - key: SUPABASE_URL
+        value: https://bbwrosuuksxzvrstnctp.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: sb_publishable_pGBjIzQmzRxH-ahkv1ZueQ_olMqvL1r
+      - key: JWT_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
