@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../db';
 import { authenticate, AuthRequest } from '../middleware/auth';
+import { JWT_SECRET } from '../config/jwt';
 
 const router = Router();
 
@@ -23,7 +24,7 @@ router.post('/login', async (req: AuthRequest, res: Response) => {
 
     const token = jwt.sign(
       { userId: user.id },
-      process.env.JWT_SECRET!,
+      JWT_SECRET,
       { expiresIn: '7d' }
     );
 
@@ -62,7 +63,7 @@ router.post('/register', async (req: AuthRequest, res: Response) => {
 
     const token = jwt.sign(
       { userId: user.id },
-      process.env.JWT_SECRET!,
+      JWT_SECRET,
       { expiresIn: '7d' }
     );
 

@@ -6,6 +6,7 @@ import authRoutes from './routes/auth';
 import candidateRoutes from './routes/candidates';
 import milestoneRoutes from './routes/milestones';
 import profileRoutes from './routes/profiles';
+import { isJwtSecretFallback } from './config/jwt';
 
 dotenv.config();
 
@@ -54,5 +55,8 @@ const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  if (isJwtSecretFallback) {
+    console.warn('JWT_SECRET is not set. Using derived fallback secret. Set JWT_SECRET in production for stronger security.');
+  }
   seedMilestones();
 });
