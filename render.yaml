@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: candidate-onboarding-backend
+    env: node
+    rootDirectory: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://postgres:sNE@R+P8JPPg.Cc@db.bbwrosuuksxzvrstnctp.supabase.co:5432/postgres?schema=public
