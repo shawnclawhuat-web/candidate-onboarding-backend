@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  fullName     String
+  role         String    @default("admin") // 'super_admin' or 'admin'
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  candidates       Candidate[]
+  candidateMilestones CandidateMilestone[]
+}
+
+model Candidate {
+  id              String    @id @default(uuid())
+  adminId         String
+  admin           User      @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  email           String
+  status          String    @default("pending") // 'pending', 'profile_completed', 'active'
+  onboardingToken  String?   @unique
+  tokenExpiresAt  DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  profile   CandidateProfile?
+  milestones CandidateMilestone[]
+}
+
+model CandidateProfile {
+  id                    String    @id @default(uuid())
+  candidateId           String    @unique
+  candidate             Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  fullName              String?
+  phone                 String?
+  educationLevel        String?   // 'high_school', 'diploma', 'bachelor', 'master', 'phd'
+  address               String?
+  birthday              DateTime?
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  profileCompletedAt    DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model MilestoneType {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  displayName String
+  icon        String
+  color       String
+  isCustom    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  
+  milestones CandidateMilestone[]
+}
+
+model CandidateMilestone {
+  id              String        @id @default(uuid())
+  candidateId     String
+  candidate       Candidate     @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  milestoneTypeId String
+  milestoneType   MilestoneType @relation(fields: [milestoneTypeId], references: [id])
+  customName      String?       // for custom events
+  milestoneDate   DateTime
+  notes           String?
+  createdById     String?
+  createdBy       User?         @relation(fields: [createdById], references: [id])
+  createdAt       DateTime      @default(now())
+}
