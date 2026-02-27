@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import prisma from './db';
 import authRoutes from './routes/auth';
 import candidateRoutes from './routes/candidates';
@@ -8,7 +7,9 @@ import milestoneRoutes from './routes/milestones';
 import profileRoutes from './routes/profiles';
 import { isJwtSecretFallback } from './config/jwt';
 
-dotenv.config();
+// Load .env but don't override existing env vars (like Render's)
+import dotenv from 'dotenv';
+dotenv.config({ override: false });
 
 const app = express();
 
