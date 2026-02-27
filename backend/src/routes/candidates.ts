@@ -4,6 +4,11 @@ import prisma from '../db';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { sendOnboardingEmail } from '../services/email';
 
+const getOnboardingLink = (token: string) => {
+  const frontendBaseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  return `${frontendBaseUrl.replace(/\/$/, '')}/candidate/form/${token}`;
+};
+
 const router = Router();
 
 // Get all candidates for admin
@@ -67,8 +72,13 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
       include: { profile: true }
     });
 
-    const onboardingLink = `http://localhost:3000/candidate/form/${token}`;
-    await sendOnboardingEmail(email, fullName || '', admin?.fullName || 'Admin', onboardingLink);
+    const onboardingLink = getOnboardingLink(token);
+
+    try {
+      await sendOnboardingEmail(email, fullName || '', admin?.fullName || 'Admin', onboardingLink);
+    } catch (emailError) {
+      console.error('Create candidate email send failed (candidate still created):', emailError);
+    }
 
     res.status(201).json(candidate);
   } catch (error) {
@@ -169,10 +179,15 @@ router.post('/:id/resend-email', authenticate, async (req: AuthRequest, res: Res
     });
 
     const admin = await prisma.user.findUnique({ where: { id: req.user!.id } });
-    const onboardingLink = `http://localhost:3000/candidate/form/${token}`;
-    await sendOnboardingEmail(candidate.email, candidate.profile?.fullName || '', admin?.fullName || 'Admin', onboardingLink);
+    const onboardingLink = getOnboardingLink(token);
 
-    res.json({ message: 'Email resent' });
+    try {
+      await sendOnboardingEmail(candidate.email, candidate.profile?.fullName || '', admin?.fullName || 'Admin', onboardingLink);
+      res.json({ message: 'Email resent' });
+    } catch (emailError) {
+      console.error('Resend candidate email failed:', emailError);
+      res.status(502).json({ error: 'Candidate updated, but failed to send onboarding email' });
+    }
   } catch (error) {
     console.error('Resend email error:', error);
     res.status(500).json({ error: 'Failed to resend email' });
