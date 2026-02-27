@@ -75,7 +75,8 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
     const onboardingLink = getOnboardingLink(token);
 
     try {
-      await sendOnboardingEmail(email, fullName || '', admin?.fullName || 'Admin', onboardingLink);
+      const result = await sendOnboardingEmail(email, fullName || '', admin?.fullName || 'Admin', onboardingLink);
+      console.log('Email send result:', JSON.stringify(result));
     } catch (emailError) {
       console.error('Create candidate email send failed (candidate still created):', emailError);
     }
